@@ -10,6 +10,7 @@ import { URL_IMAGE } from "../../config";
 export default function Home() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [modal, setModal] = useState<{
     isOpen: boolean;
     title: string;
@@ -35,16 +36,27 @@ export default function Home() {
   }));
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
-      const res = await fetch('https://api.qumiqo.com/api/posts?_limit=16&type=newest&page=1');
-      const {data, meta}= await res.json();
-      setData(data);
-      setLoading(false);
+      try {
+        const res = await fetch('https://api.qumiqo.com/api/posts?_limit=16&type=newest&page=1');
+        if (!res.ok) {
+          throw new Error(`Ошибка при запросе: ${res.statusText}`);
+        }
+        const { data, meta } = await res.json();
+        setData(data);
+        setLoading(false);
+      } catch (err) {
+        setError('Не удалось загрузить данные');
+        setLoading(false);
+        console.error('Ошибка:', err);
+      }
     };
 
     fetchData();
-  }, []);
-  console.log(data)
+  }, [new Date()]);
   if (loading) return <div>Loading...</div>;
+  if (error) {
+    return <div>{error}</div>;
+  }
   return (
     <div className={styles.container}>
        <Modal isOpen={modal.isOpen} onClose={closeModal}>
