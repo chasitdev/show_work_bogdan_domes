@@ -1,0 +1,119 @@
+.conteiner{
+  display: flex;
+  flex-direction: column;
+
+}
+
+.previewHeider{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.previewHeiderTitle{
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.previewHeiderMeta{
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+.previewHeiderMetaIcon{
+  position: relative;
+}
+.previewHeiderMetaIcon::after{
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -54%);
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 2px solid #00000010;
+}
+
+.previewHeiderCategories{
+  font-size: 12px;
+  color: #00000058;
+}
+
+.previewHeiderCategoriesDate{
+  margin-right: 5px;
+}
+
+.previewBody{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  width: 100%;
+  background: #f2f2f2;
+  border-radius: 12px;
+  overflow: hidden;
+  height: calc(100vh - 400px);
+  position: relative;
+}
+
+.previewFooter{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.previewFooterThambs{
+  display: grid;
+  grid-template-columns: repeat(auto-fill,40px);
+  gap: 5px;
+  position: relative;
+}
+
+.previewFooterThambsImage{  
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.previewFooterCounter{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  background: white;
+  min-width: auto;
+}
+.previewFooterCounterItem{
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: none;
+  background: #f7f8fa;
+  color: #4b5563;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.previewFooterCounterItemActive{
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: none;
+  color: #4b5563;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+  background: #e9d5a4;
+  color: black;
+  font-weight: bold;
+}

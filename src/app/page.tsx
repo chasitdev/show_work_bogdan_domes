@@ -1,95 +1,103 @@
+'use client'
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import {profile, smile} from "./images/index";
 import styles from "./page.module.css";
+import Modal from "./Component/Modal/modal";
+import PreviewCard from "./Component/PreviewCard/PreviewCard";
+import { URL_IMAGE } from "../../config";
 
-export default function Home() {
+export default function Home({...props}) {
+  console.log({...props});
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [modal, setModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    content: React.ReactNode;
+  }>({
+    isOpen: false,
+    title: "",
+    content: null,
+  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = (c) =>{ 
+    
+    setModal( s => ({
+      ...s,
+      isOpen: true,
+      content: <PreviewCard {...c} />,
+    }))
+    setIsModalOpen(true);
+  }
+  const closeModal = () => setIsModalOpen(false);
+  useEffect(() => {
+    const fetchData = async (): Promise<void> => {
+      const res = await fetch('https://api.qumiqo.com/api/posts?_limit=16&type=newest&page=1');
+      const {data, meta}= await res.json();
+      setData(data);
+      setLoading(false);
+    };
+
+    fetchData();
+  }, []);
+  console.log(data)
+  if (loading) return <div>Loading...</div>;
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className={styles.container}>
+       <Modal isOpen={isModalOpen} onClose={closeModal}>
+          {modal.content}
+        </Modal>
+    {
+      data.map( (c:any) => (
+        <div key={c._id} className={styles.cardContainer}
+        >
+          <div className={styles.cardHeader}>
+            <div className={styles.cardHeaderWrapper}>
+              <div className={styles.cardHeaderAvatar}>
+                <Image
+                  className={styles.logo}
+                  src={profile}
+                  alt="avatar"
+                  width={40}
+                  height={40}
+                  priority
+                />
+              </div>
+              <div className={styles.cardHeaderInfo}>
+                <span className={styles.cardHeaderName} >{c.author.name}</span>
+                <a href={`mailto:${c.author.email}` }> <span className={styles.cardHeaderEmail} >@{c.author.username}</span></a>
+              </div>
+            </div>
+            <div className={styles.cardHeaderWrapper}>
+              <div className={styles.socialIconWrap}>
+                <Image
+                    className={styles.socialIcon}
+                    src={smile}
+                    // src={"https://api.qumiqo.com" + c.preview.thumbnail.filename}
+                    alt="social"
+                    width={20}
+                    height={20}
+                    objectFit="cover"
+                />
+                </div>
+            </div>
+          </div>
+          <div className={styles.cardBody}
+            onClick={()=>openModal(c)}
           >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+              <Image
+                className={styles.preview}
+                src={URL_IMAGE + c.preview.thumbnail.filename}
+                alt="preview"
+                layout="fill"
+                objectFit="cover"
+              />
+          </div>
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      ))
+    }
     </div>
   );
 }
