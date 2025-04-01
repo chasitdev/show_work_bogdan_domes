@@ -7,8 +7,7 @@ import Modal from "./Component/Modal/modal";
 import PreviewCard from "./Component/PreviewCard/PreviewCard";
 import { URL_IMAGE } from "../../config";
 
-export default function Home({...props}) {
-  console.log({...props});
+export default function Home() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<{
@@ -20,18 +19,20 @@ export default function Home({...props}) {
     title: "",
     content: null,
   });
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const openModal = (c) =>{ 
+  const openModal = (c:any) =>{ 
     
     setModal( s => ({
       ...s,
       isOpen: true,
       content: <PreviewCard {...c} />,
     }))
-    setIsModalOpen(true);
   }
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => setModal(s => ({
+    isOpen: false,
+    title: "",
+    content: null,
+  }));
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       const res = await fetch('https://api.qumiqo.com/api/posts?_limit=16&type=newest&page=1');
@@ -46,7 +47,7 @@ export default function Home({...props}) {
   if (loading) return <div>Loading...</div>;
   return (
     <div className={styles.container}>
-       <Modal isOpen={isModalOpen} onClose={closeModal}>
+       <Modal isOpen={modal.isOpen} onClose={closeModal}>
           {modal.content}
         </Modal>
     {
